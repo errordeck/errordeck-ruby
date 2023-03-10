@@ -5,7 +5,7 @@ module Errordeck
   class Boxing
     # initialize the boxing class
 
-    attr_accessor :error_event, :transaction, :request, :user, :tags, :modules, :context
+    attr_reader :error_event, :transaction, :request, :user, :tags, :modules, :context
 
     def initialize
       @error_event = nil
@@ -14,9 +14,7 @@ module Errordeck
       @user = nil
       @tags = nil
       if Gem::Specification.respond_to?(:map)
-        @modules = Hash[Gem::Specification.map do |spec|
-                          [spec.name, spec.version.to_s]
-                        end]
+        @modules = Gem::Specification.map { |spec| [spec.name, spec.version.to_s] }.to_h
       end
       @context = Context.context
     end
@@ -64,14 +62,14 @@ module Errordeck
     end
 
     # set user context
-    def user_context(user)
+    def user_context=(user)
       @user = user
     end
 
     attr_writer :context
 
     # set tags context
-    def tags_context(tags)
+    def tags_context=(tags)
       @tags = tags
     end
 
@@ -83,39 +81,31 @@ module Errordeck
       exceptions = Errordeck::Exception.parse_from_exception(exception, project_root)
 
       Event.new(
-        config[:level] || "error",
-        transaction,
-        server_name_env,
-        config[:release],
-        config[:dist],
-        config[:environment],
-        exception.message,
-        modules,
-        nil,
-        nil,
-        exceptions,
-        context,
-        nil,
-        nil
+        level: config[:level] || "error",
+        transaction: transaction,
+        server_name: server_name_env,
+        release: config[:release],
+        dist: config[:dist],
+        environment: config[:environment],
+        message: exception.message,
+        modules: modules,
+        exceptions: exceptions,
+        contexts: context
       )
     end
 
     def generate_boxing_event(level, message, extra = nil)
       Event.new(
-        level,
-        transaction,
-        server_name_env,
-        config[:release],
-        config[:dist],
-        config[:environment],
-        message,
-        modules,
-        extra,
-        nil,
-        nil,
-        context,
-        nil,
-        nil
+        level: level,
+        transaction: transaction,
+        server_name: server_name_env,
+        release: config[:release],
+        dist: config[:dist],
+        environment: config[:environment],
+        message: message,
+        modules: modules,
+        extra: extra,
+        contexts: context
       )
     end
 

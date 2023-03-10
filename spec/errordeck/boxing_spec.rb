@@ -115,7 +115,7 @@ RSpec.describe Errordeck::Boxing do
     let(:user) { { id: 1, email: "test@example.com" } }
 
     it "should set user" do
-      boxing.user_context(user)
+      boxing.user_context = user
       expect(boxing.user).to eq(user)
     end
   end
@@ -124,7 +124,7 @@ RSpec.describe Errordeck::Boxing do
     let(:tags) { { tag: "test" } }
 
     it "should set tags" do
-      boxing.tags_context(tags)
+      boxing.tags_context = tags
       expect(boxing.tags).to eq(tags)
     end
   end

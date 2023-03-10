@@ -26,6 +26,5 @@ RSpec.describe Errordeck::Stacktrace do
     # check the stacktrace
     expect(stacktrace.to_json).to be_a(String)
     expect(stacktrace.to_json).to include("abs_path")
-    puts stacktrace.to_json
   end
 end
