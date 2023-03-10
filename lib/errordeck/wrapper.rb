@@ -2,7 +2,7 @@
 
 module Errordeck
   # the class that setup the events for Errordeck
-  class Boxing
+  class Wrapper
     # initialize the boxing class
 
     attr_reader :error_event, :transaction, :request, :user, :tags, :modules, :context

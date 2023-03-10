@@ -5,7 +5,7 @@ require 'net/http'
 require 'uri'
 
 require_relative 'errordeck/version'
-require_relative 'boxing'
+require_relative 'wrapper'
 require_relative 'scrubber/scrubber'
 Dir["#{File.dirname(__FILE__)}/errordeck/**/*.rb"].sort.each { |file| require file }
 
@@ -61,19 +61,19 @@ module Errordeck
     end
 
     def generate_event(level:, message:, extra: nil, capture: true)
-      boxing(capture) do |b|
+      wrap(capture) do |b|
         b.message(level, message, extra)
       end
     end
 
     def message(level:, message:, extra: nil, capture: true)
-      boxing(capture) do |b|
+      wrap(capture) do |b|
         b.message(level, message, extra)
       end
     end
 
     def capture(exception:, user: nil, tags: nil, capture: true)
-      boxing(capture) do |b|
+      wrap(capture) do |b|
         b.user_context = user if user
         b.tags_context = tags if tags
         b.capture(exception)
@@ -82,14 +82,14 @@ module Errordeck
 
     private
 
-    def boxing(capture = true)
-      boxing = Boxing.new
-      yield boxing
+    def wrap(capture = true)
+      wrapper = Wrapper.new
+      yield wrapper
       if capture
-        event = boxing.send_event
+        event = wrapper.send_event
         send_issue(project_id: config[:project_id], token: config[:token], event: event)
       else
-        boxing.error_event
+        wrapper.error_event
       end
     end
   end

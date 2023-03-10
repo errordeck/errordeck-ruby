@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Errordeck::Boxing do
-  let(:boxing) { Errordeck::Boxing.new }
-  let(:transaction) { boxing.transaction }
-  let(:request) { boxing.request }
-  let(:user) { boxing.user }
-  let(:tags) { boxing.tags }
-  let(:modules) { boxing.modules }
-  let(:context) { boxing.context }
+RSpec.describe Errordeck::Wrapper do
+  let(:wrapper) { Errordeck::Wrapper.new }
+  let(:transaction) { wrapper.transaction }
+  let(:request) { wrapper.request }
+  let(:user) { wrapper.user }
+  let(:tags) { wrapper.tags }
+  let(:modules) { wrapper.modules }
+  let(:context) { wrapper.context }
 
   describe "#initialize" do
     it "should set transaction to nil" do
@@ -41,28 +41,28 @@ RSpec.describe Errordeck::Boxing do
     let(:tags) { { tag: "test" } }
 
     it "should set event to generate_from_exception" do
-      boxing.capture(exception, user, tags)
-      error_event = boxing.error_event
+      wrapper.capture(exception, user, tags)
+      error_event = wrapper.error_event
       expect(error_event).to be_a(Errordeck::Event)
       expect(error_event.level).to eq("error")
       expect(error_event.message).to eq("test")
     end
 
     it "should set user context" do
-      boxing.capture(exception, user, tags)
-      error_event = boxing.error_event
+      wrapper.capture(exception, user, tags)
+      error_event = wrapper.error_event
       expect(error_event.user).to eq(user)
     end
 
     it "should set tags context" do
-      boxing.capture(exception, user, tags)
-      error_event = boxing.error_event
+      wrapper.capture(exception, user, tags)
+      error_event = wrapper.error_event
       expect(error_event.tags).to eq(tags)
     end
 
     it "should set request context" do
-      boxing.capture(exception, user, tags)
-      error_event = boxing.error_event
+      wrapper.capture(exception, user, tags)
+      error_event = wrapper.error_event
       expect(error_event.request).to eq(request)
     end
   end
@@ -71,7 +71,7 @@ RSpec.describe Errordeck::Boxing do
     let(:level) { "error" }
     let(:message) { "test" }
     let(:extra) { { extra: "test" } }
-    let(:error_event) { boxing.message(level, message, extra) }
+    let(:error_event) { wrapper.message(level, message, extra) }
 
     it "should set event to generate_event" do
       expect(error_event).to be_a(Errordeck::Event)
@@ -97,8 +97,8 @@ RSpec.describe Errordeck::Boxing do
     let(:transaction) { "test" }
 
     it "should set transaction" do
-      boxing.set_transaction(transaction)
-      expect(boxing.transaction).to eq(transaction)
+      wrapper.set_transaction(transaction)
+      expect(wrapper.transaction).to eq(transaction)
     end
   end
 
@@ -106,8 +106,8 @@ RSpec.describe Errordeck::Boxing do
     let(:request) { "test" }
 
     it "should set request" do
-      boxing.set_request(request)
-      expect(boxing.request).to eq(request)
+      wrapper.set_request(request)
+      expect(wrapper.request).to eq(request)
     end
   end
 
@@ -115,8 +115,8 @@ RSpec.describe Errordeck::Boxing do
     let(:user) { { id: 1, email: "test@example.com" } }
 
     it "should set user" do
-      boxing.user_context = user
-      expect(boxing.user).to eq(user)
+      wrapper.user_context = user
+      expect(wrapper.user).to eq(user)
     end
   end
 
@@ -124,8 +124,8 @@ RSpec.describe Errordeck::Boxing do
     let(:tags) { { tag: "test" } }
 
     it "should set tags" do
-      boxing.tags_context = tags
-      expect(boxing.tags).to eq(tags)
+      wrapper.tags_context = tags
+      expect(wrapper.tags).to eq(tags)
     end
   end
 
@@ -133,8 +133,8 @@ RSpec.describe Errordeck::Boxing do
     let(:context) { { context: "test" } }
 
     it "should set context" do
-      boxing.context = context
-      expect(boxing.context).to eq(context)
+      wrapper.context = context
+      expect(wrapper.context).to eq(context)
     end
   end
 end
