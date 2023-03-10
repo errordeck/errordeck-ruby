@@ -79,10 +79,11 @@ end
 begin
   raise "test"
 rescue StandardError => e
-  Errordeck.wrap do |box|
-    box.user_context = { id: 1 }
-    box.tags_context = { tag: "tag" }
-    box.context = { context: "context" }
+  Errordeck.wrap do |wrap|
+    wrap.user_context = { id: 1 }
+    wrap.tags_context = { tag: "tag" }
+    wrap.context = { context: "context" }
+    wrap.capture(e) # needs to be last
   end
 end
 ``` 
