@@ -5,7 +5,8 @@ module Errordeck
   class Wrapper
     # initialize the boxing class
 
-    attr_reader :error_event, :transaction, :request, :user, :tags, :modules, :context
+    attr_accessor :context
+    attr_reader :error_event, :transaction, :request, :user, :tags, :modules
 
     def initialize
       @error_event = nil
@@ -14,7 +15,7 @@ module Errordeck
       @user = nil
       @tags = nil
       if Gem::Specification.respond_to?(:map)
-        @modules = Gem::Specification.map { |spec| [spec.name, spec.version.to_s] }.to_h
+        @modules = Gem::Specification.to_h { |spec| [spec.name, spec.version.to_s] }
       end
       @context = Context.context
     end
@@ -66,8 +67,6 @@ module Errordeck
       @user = user
     end
 
-    attr_writer :context
-
     # set tags context
     def tags_context=(tags)
       @tags = tags
@@ -115,7 +114,7 @@ module Errordeck
 
     def server_name_env
       # set server_name context
-      config[:server_name] || ENV["SERVER_NAME"]
+      config[:server_name] || ENV.fetch("SERVER_NAME", nil)
     end
   end
 end

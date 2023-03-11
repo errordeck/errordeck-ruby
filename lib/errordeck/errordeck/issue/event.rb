@@ -8,7 +8,8 @@ module Errordeck
     attr_accessor :id, :timestamp, :platform, :level, :logger, :tags, :transaction, :server_name, :release, :dist,
                   :environment, :message, :modules, :extra, :exceptions, :contexts, :request, :sdk, :user
 
-    def initialize(level:, transaction:, server_name: nil, release: nil, dist: nil, environment: "development", message:, modules: nil, extra: nil, tags: nil, exceptions: nil, contexts: nil, request: nil, user: nil)
+    def initialize(level:, transaction:, message:, server_name: nil, release: nil, dist: nil,
+                   environment: "development", modules: nil, extra: nil, tags: nil, exceptions: nil, contexts: nil, request: nil, user: nil)
       @id = ::SecureRandom.uuid.delete("-")
       @timestamp = Time.now.utc
       @platform = :ruby

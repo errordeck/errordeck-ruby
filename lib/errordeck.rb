@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-require 'json'
-require 'net/http'
-require 'uri'
+require "json"
+require "net/http"
+require "uri"
 
-require_relative 'errordeck/version'
-require_relative 'wrapper'
-require_relative 'scrubber/scrubber'
-Dir["#{File.dirname(__FILE__)}/errordeck/**/*.rb"].sort.each { |file| require file }
+require_relative "errordeck/version"
+require_relative "errordeck/wrapper"
+require_relative "errordeck/scrubber/scrubber"
+require_relative "errordeck/plugin_require"
+Dir["#{File.dirname(__FILE__)}/errordeck/errordeck/**/*.rb"].sort.each { |file| require file }
 
 module Errordeck
   class Error < StandardError; end
@@ -35,8 +36,8 @@ module Errordeck
       uri = URI.parse("https://app.errordeck.com/api/#{project_id}/store")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      request = Net::HTTP::Post.new(uri.request_uri, 'Authorization' => "Bearer #{token}")
-      request['Content-Type'] = 'application/json'
+      request = Net::HTTP::Post.new(uri.request_uri, "Authorization" => "Bearer #{token}")
+      request["Content-Type"] = "application/json"
       event_json = event.to_json
       response = http.request(request, event_json)
       response.body
@@ -45,19 +46,19 @@ module Errordeck
     end
 
     def info(message:, extra: nil)
-      generate_event(level: 'info', message: message, extra: extra)
+      generate_event(level: "info", message: message, extra: extra)
     end
 
     def warning(message:, extra: nil)
-      generate_event(level: 'warning', message: message, extra: extra)
+      generate_event(level: "warning", message: message, extra: extra)
     end
 
     def error(message:, extra: nil)
-      generate_event(level: 'error', message: message, extra: extra)
+      generate_event(level: "error", message: message, extra: extra)
     end
 
     def fatal(message:, extra: nil)
-      generate_event(level: 'fatal', message: message, extra: extra)
+      generate_event(level: "fatal", message: message, extra: extra)
     end
 
     def generate_event(level:, message:, extra: nil, capture: true)
@@ -79,8 +80,6 @@ module Errordeck
         b.capture(exception)
       end
     end
-
-    private
 
     def wrap(capture = true)
       wrapper = Wrapper.new

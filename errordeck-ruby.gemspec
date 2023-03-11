@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "lib/errordeck/errordeck/version"
+require_relative "lib/errordeck/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "errordeck-ruby"
+  spec.name = "errordeck"
   spec.version = Errordeck::VERSION
   spec.authors = ["Håkan Nylén"]
   spec.email = ["hakan@dun.se"]
@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+  spec.metadata["rubygems_mfa_required"] = "true"
 end

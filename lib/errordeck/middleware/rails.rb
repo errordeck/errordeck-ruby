@@ -13,7 +13,7 @@ module Errordeck
       end
 
       def handle_exception(exception)
-        Errordeck.boxing do |b|
+        Errordeck.wrap do |b|
           b.set_request(request.env)
           b.set_transaction(request.env["PATH_INFO"])
           b.capture(exception)

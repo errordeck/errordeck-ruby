@@ -11,11 +11,17 @@ module Errordeck
       end
 
       def call(env)
-        Errordeck.request_from_rack(env)
-        @app.call(env)
-      rescue Exception => e
-        Errordeck.capture(e)
-        raise e
+        Errordeck.wrap do |b|
+          b.set_request(env)
+          b.set_transaction(env["PATH_INFO"])
+
+          begin
+            @app.call(env)
+          rescue Exception => e
+            b.capture(e)
+            raise e
+          end
+        end
       end
     end
   end

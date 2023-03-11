@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Errordeck::Event do
   let(:level) { "error" }
   let(:transaction) { "test-transaction" }

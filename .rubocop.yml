@@ -1,6 +1,7 @@
 AllCops:
   TargetRubyVersion: 2.7
   SuggestExtensions: false
+  NewCops: enable
 
 Style/StringLiterals:
   Enabled: true
@@ -12,3 +13,6 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+
+Style/Documentation:
+  Enabled: false

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 # Require all files in lib
-Dir[File.expand_path("../lib/**/*.rb", __dir__)].reject { |f| f.include?("middleware/rails.rb") }.each { |f| require f }
+Dir[File.expand_path("../lib/**/**/*.rb", __dir__)].reject do |f|
+  f.include?("middleware/rails.rb")
+end.each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
