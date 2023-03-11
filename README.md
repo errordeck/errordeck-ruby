@@ -1,4 +1,4 @@
-# Errordeck::Ruby
+# Errordeck
 
 [![Gem Version](https://badge.fury.io/rb/errordeck-ruby.svg)](https://badge.fury.io/rb/errordeck-ruby)
 
@@ -46,11 +46,11 @@ You can set up the client in the following ways:
 Set the token, project_id, environment, release and dist in the configuration:
 ```ruby
 Errordeck.configure do |config|
-  config[:token] = "_r-3A7egL7uMSFASfdRodzxxxAQo"
-  config[:project_id] = "1"
-  config[:environment] = "development" # defaults to "development"
-  config[:release] = "0.0.0" # optional
-  config[:dist] = "0.0.0" # optional
+  config.token = "_r-3A7egL7uMSFASfdRodzxxxAQo"
+  config.project_id = "1"
+  config.environment = "development" # defaults to "development"
+  config.release = "0.0.0" # optional
+  config.dist = "0.0.0" # optional
 end
 ```
 
