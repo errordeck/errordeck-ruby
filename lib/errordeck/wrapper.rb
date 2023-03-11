@@ -22,7 +22,15 @@ module Errordeck
 
     # send event to errordeck
     def send_event
-      Errordeck.send_event(error_event)
+      uri = URI.parse("https://app.errordeck.com/api/#{config.project_id}/store")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      request = Net::HTTP::Post.new(uri.request_uri, "Authorization" => "Bearer #{config.token}")
+      request["Content-Type"] = "application/json"
+      event_json = error_event.to_json
+      http.request(request, event_json)
+    rescue StandardError => e
+      raise Error, "Error sending issue to Errordeck: #{e.message}"
     end
 
     def capture(exception, user = nil, tags = nil)
@@ -80,12 +88,12 @@ module Errordeck
       exceptions = Errordeck::Exception.parse_from_exception(exception, project_root)
 
       Event.new(
-        level: config[:level] || "error",
+        level: config.level || "error",
         transaction: transaction,
         server_name: server_name_env,
-        release: config[:release],
-        dist: config[:dist],
-        environment: config[:environment],
+        release: config.release,
+        dist: config.dist,
+        environment: config.environment,
         message: exception.message,
         modules: modules,
         exceptions: exceptions,
@@ -98,9 +106,9 @@ module Errordeck
         level: level,
         transaction: transaction,
         server_name: server_name_env,
-        release: config[:release],
-        dist: config[:dist],
-        environment: config[:environment],
+        release: config.release,
+        dist: config.dist,
+        environment: config.environment,
         message: message,
         modules: modules,
         extra: extra,
@@ -109,12 +117,12 @@ module Errordeck
     end
 
     def config
-      Errordeck.config
+      Errordeck.configuration
     end
 
     def server_name_env
       # set server_name context
-      config[:server_name] || ENV.fetch("SERVER_NAME", nil)
+      config.server_name || ENV.fetch("SERVER_NAME", nil)
     end
   end
 end

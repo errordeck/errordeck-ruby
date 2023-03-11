@@ -5,6 +5,7 @@ require "net/http"
 require "uri"
 
 require_relative "errordeck/version"
+require_relative "errordeck/configuration"
 require_relative "errordeck/wrapper"
 require_relative "errordeck/scrubber/scrubber"
 require_relative "errordeck/plugin_require"
@@ -13,37 +14,7 @@ Dir["#{File.dirname(__FILE__)}/errordeck/errordeck/**/*.rb"].sort.each { |file| 
 module Errordeck
   class Error < StandardError; end
 
-  DEFAULT_CONFIG = {
-    token: nil,
-    project_id: nil,
-    environment: "development",
-    server_name: nil,
-    release: "0.0.0",
-    dist: "0.0.0",
-    level: "error"
-  }.freeze
-
-  @config = DEFAULT_CONFIG.dup
-
   class << self
-    attr_accessor :config
-
-    def configure(**options)
-      @config.merge!(options)
-    end
-
-    def send_issue(project_id:, token:, event:)
-      uri = URI.parse("https://app.errordeck.com/api/#{project_id}/store")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      request = Net::HTTP::Post.new(uri.request_uri, "Authorization" => "Bearer #{token}")
-      request["Content-Type"] = "application/json"
-      event_json = event.to_json
-      response = http.request(request, event_json)
-      response.body
-    rescue StandardError => e
-      raise Error, "Error sending issue to Errordeck: #{e.message}"
-    end
 
     def info(message:, extra: nil)
       generate_event(level: "info", message: message, extra: extra)
@@ -85,8 +56,7 @@ module Errordeck
       wrapper = Wrapper.new
       yield wrapper
       if capture
-        event = wrapper.send_event
-        send_issue(project_id: config[:project_id], token: config[:token], event: event)
+        wrapper.send_event
       else
         wrapper.error_event
       end

@@ -15,12 +15,12 @@ module Errordeck
         version: uname[:version],
         build: uname[:build],
         kernel_version: uname[:version]
-      }
+      }.compact
     end
 
     # get context
     def self.context
-      { os: os, runtime: runtime }
+      { os: os, runtime: runtime }.compact
     end
   end
 end

@@ -5,18 +5,18 @@
 
 module Errordeck
   module Middleware
-    class Rack
-      def initialize(app)
-        @app = app
+    module Rack
+      def self.new(app)
+        lambda { |env| call(env, app) }
       end
-
-      def call(env)
+  
+      def self.call(env, app)
         Errordeck.wrap do |b|
           b.set_request(env)
           b.set_transaction(env["PATH_INFO"])
 
           begin
-            @app.call(env)
+            app.call(env)
           rescue Exception => e
             b.capture(e)
             raise e

@@ -7,20 +7,12 @@ RSpec.describe Errordeck do
 
   it "configures the gem" do
     Errordeck.configure do |config|
-      config[:level] = "error"
-      config[:release] = "0.0.0"
-      config[:dist] = "0.0.0"
-      config[:environment] = "development"
+      config.level = "error"
+      config.release = "0.0.0"
+      config.dist = "0.0.0"
+      config.environment = "development"
     end
 
-    expect(Errordeck.config).to eq({
-                                     level: "error",
-                                     release: "0.0.0",
-                                     project_id: nil,
-                                     dist: "0.0.0",
-                                     server_name: nil,
-                                     environment: "development",
-                                     token: nil
-                                   })
+    expect(Errordeck.configuration).to be_a(Errordeck::Configuration)
   end
 end

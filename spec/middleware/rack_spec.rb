@@ -6,6 +6,6 @@ RSpec.describe Errordeck::Middleware::Rack do
     # create a new rack middleware
     middleware = Errordeck::Middleware::Rack.new(nil)
     # check the middleware
-    expect(middleware).to be_a(Errordeck::Middleware::Rack)
+    expect(middleware).to be_a(Proc)
   end
 end
