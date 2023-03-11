@@ -16,6 +16,7 @@ RSpec.describe Errordeck::Exception do
     expect(exceptions.first.value).to be_a(String)
     expect(exceptions.first.stacktrace).to be_a(Array)
     expect(exceptions.first.stacktrace.length).to be > 0
+    expect(exceptions.first.stacktrace.first).to be_a(Errordeck::Stacktrace)
     expect(exceptions.first.module).to be_a(String)
     expect(exceptions.first.thread_id).to be_a(Integer)
   end
@@ -30,5 +31,8 @@ RSpec.describe Errordeck::Exception do
     # check the exception
     expect(exceptions.to_json).to be_a(String)
     expect(exceptions.to_json).to include("Exception")
+    parsed = JSON.parse(exceptions.to_json)
+    expect(parsed).to be_a(Array)
+    expect(parsed.first["stacktraces"].first).to be_a(Hash)
   end
 end

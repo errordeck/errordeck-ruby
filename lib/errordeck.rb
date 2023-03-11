@@ -15,7 +15,6 @@ module Errordeck
   class Error < StandardError; end
 
   class << self
-
     def info(message:, extra: nil)
       generate_event(level: "info", message: message, extra: extra)
     end
@@ -54,11 +53,13 @@ module Errordeck
 
     def wrap(capture = true)
       wrapper = Wrapper.new
-      yield wrapper
-      if capture
-        wrapper.send_event
-      else
-        wrapper.error_event
+      begin
+        yield(wrapper)
+        wrapper.send_event if capture
+      rescue Exception => e
+        wrapper.capture(e)
+        wrapper.send_event if capture
+        raise e
       end
     end
   end

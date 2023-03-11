@@ -20,7 +20,7 @@ module Errordeck
       method = env["REQUEST_METHOD"]
       data = env["rack.input"].read
       query_string = env["QUERY_STRING"]
-      cookies = env["HTTP_COOKIE"]
+      cookies = split_to_has_on(env["HTTP_COOKIE"], ";")
       headers = env.select do |k, _v|
                   k.start_with?("HTTP_")
                 end.transform_keys { |k| k.sub(/^HTTP_/, "").gsub("_", "-").capitalize }
@@ -29,11 +29,17 @@ module Errordeck
       new(url, method, data, query_string, cookies, headers, env)
     end
 
-    def as_json(_options = {})
+    def self.split_to_has_on(resource, split = ";")
+      resource.split(split).to_h do |item|
+        item.split("=").map(&:strip)
+      end
+    end
+
+    def as_json(*_options)
       {
         url: @url,
         method: @method,
-        data: @data,
+        # data: @data,
         query_string: @query_string,
         cookies: @cookies,
         headers: @headers
@@ -41,7 +47,7 @@ module Errordeck
     end
 
     def to_json(*options)
-      as_json(*options).to_json(*options)
+      JSON.generate(as_json, *options)
     end
   end
 end

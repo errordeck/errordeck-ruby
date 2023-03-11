@@ -7,9 +7,9 @@ module Errordeck
   module Middleware
     module Rack
       def self.new(app)
-        lambda { |env| call(env, app) }
+        ->(env) { call(env, app) }
       end
-  
+
       def self.call(env, app)
         Errordeck.wrap do |b|
           b.set_request(env)

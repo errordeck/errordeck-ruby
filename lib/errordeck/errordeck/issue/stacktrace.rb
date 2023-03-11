@@ -15,7 +15,7 @@ module Errordeck
       @vars = {}
     end
 
-    def as_json(_options = {})
+    def as_json(*_options)
       {
         abs_path: @abs_path,
         function: @function,
@@ -28,7 +28,7 @@ module Errordeck
     end
 
     def to_json(*options)
-      as_json(*options).to_json(*options)
+      JSON.generate(as_json, *options)
     end
 
     def self.parse_from_backtrace(backtrace, project_root = nil)

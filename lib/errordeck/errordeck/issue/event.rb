@@ -31,7 +31,7 @@ module Errordeck
       @user = user
     end
 
-    def to_json(*_args)
+    def as_json(*_options)
       {
         event_id: @id,
         timestamp: @timestamp.to_i,
@@ -51,7 +51,11 @@ module Errordeck
         request: @request,
         sdk: @sdk,
         user: @user
-      }.to_json
+      }
+    end
+
+    def to_json(*args)
+      JSON.generate(as_json, *args)
     end
   end
 end

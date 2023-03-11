@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Errordeck
   class Configuration
     attr_accessor :token, :project_id, :environment, :release, :dist, :level, :server_name

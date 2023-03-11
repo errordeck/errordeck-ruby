@@ -11,11 +11,11 @@ RSpec.describe Errordeck::Context do
   it "has an os" do
     uname = Etc.uname
     expect(Errordeck::Context.os).to eq({
-                                          name: uname[:sysname] || RbConfig::CONFIG["host_os"],
-                                          version: uname[:version],
-                                          build: uname[:build],
-                                          kernel_version: uname[:version]
-                                        })
+      name: uname[:sysname] || RbConfig::CONFIG["host_os"],
+      version: uname[:version],
+      build: uname[:build],
+      kernel_version: uname[:version]
+    }.compact)
   end
 
   it "has a context" do

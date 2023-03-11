@@ -18,15 +18,9 @@ module Errordeck
       def scrub_cookie(cookie)
         return nil if cookie.nil?
 
-        # split on = and ; to get key value pairs
-        cookie.split(";").map do |param|
-          key, value = param.split("=")
-          if Errordeck::Scrubber::SENSITIVE_PARAMS.include?(key)
-            "#{key}=#{Errordeck::Scrubber::SENSITIVE_VALUE}"
-          else
-            param
-          end
-        end.join(";")
+        cookie.each do |key, _value|
+          cookie[key] = Errordeck::Scrubber::SENSITIVE_VALUE if Errordeck::Scrubber::SENSITIVE_PARAMS.include?(key)
+        end
       end
     end
   end

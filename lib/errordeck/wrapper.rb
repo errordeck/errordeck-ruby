@@ -8,6 +8,11 @@ module Errordeck
     attr_accessor :context
     attr_reader :error_event, :transaction, :request, :user, :tags, :modules
 
+    # have a check if it is a message or exception
+    @message = false
+
+    @already_sent = false
+
     def initialize
       @error_event = nil
       @transaction = nil
@@ -22,18 +27,24 @@ module Errordeck
 
     # send event to errordeck
     def send_event
+      return if @error_event.nil? && @message == true
+
+      return if @already_sent
+
       uri = URI.parse("https://app.errordeck.com/api/#{config.project_id}/store")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       request = Net::HTTP::Post.new(uri.request_uri, "Authorization" => "Bearer #{config.token}")
       request["Content-Type"] = "application/json"
-      event_json = error_event.to_json
-      http.request(request, event_json)
+      event_json = @error_event&.to_json
+      response = http.request(request, event_json)
+      @already_sent = true
     rescue StandardError => e
       raise Error, "Error sending issue to Errordeck: #{e.message}"
     end
 
     def capture(exception, user = nil, tags = nil)
+      @message = false
       @error_event = generate_from_exception(exception)
 
       # set user context
@@ -49,6 +60,7 @@ module Errordeck
 
     # generate event with level, message and extra
     def message(level, message, extra = nil)
+      @message = true
       @error_event = generate_boxing_event(level, message, extra)
 
       # set user context
@@ -66,8 +78,8 @@ module Errordeck
       @transaction = transaction
     end
 
-    def set_request(request = nil)
-      @request = request
+    def set_request(env = nil)
+      @request = Request.parse_from_rack_env(env)
     end
 
     # set user context
@@ -83,8 +95,6 @@ module Errordeck
     private
 
     def generate_from_exception(exception)
-      # Make project_root here
-      project_root = File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
       exceptions = Errordeck::Exception.parse_from_exception(exception, project_root)
 
       Event.new(
@@ -99,6 +109,20 @@ module Errordeck
         exceptions: exceptions,
         contexts: context
       )
+    end
+
+    def project_root
+      if defined?(Rails)
+        Rails.root.to_s
+      elsif defined?(Sinatra)
+        Sinatra::Application.root.to_s
+      elsif defined?(Rack)
+        Rack::Directory.new("").root.to_s
+      elsif defined?(Bundler)
+        Bundler.root.to_s
+      else
+        File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
+      end
     end
 
     def generate_boxing_event(level, message, extra = nil)
