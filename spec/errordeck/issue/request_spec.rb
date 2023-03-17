@@ -18,33 +18,30 @@ RSpec.describe Errordeck::Request do
     it "returns a parsed request object" do
       expect(subject.url).to eq("https://example.com/path?foo=bar")
       expect(subject.method).to eq("GET")
-      expect(subject.data).to eq("request body")
       expect(subject.query_string).to eq("foo=bar")
-      expect(subject.cookies).to eq("session=[FILTERED]")
-      expect(subject.headers).to eq("Cookie" => "[FILTERED]", "User-agent" => "Mozilla/5.0")
+      expect(subject.cookies).to eq("session" => "[FILTERED]")
+      expect(subject.headers).to eq("USER-AGENT" => "Mozilla/5.0")
     end
   end
 
   describe "#as_json" do
-    subject { described_class.new("https://example.com/path", "POST", "request body", "foo=bar", "cookie=value", { "USER_AGENT" => "Mozilla/5.0" }, env).as_json }
+    subject { described_class.new("https://example.com/path", "POST", "request body", "foo=bar", { "cookie" => "value" }, { "USER_AGENT" => "Mozilla/5.0" }, env).as_json }
 
     it "returns a JSON representation of the request" do
       expect(subject).to eq(
         url: "https://example.com/path",
         method: "POST",
-        data: "request body",
         query_string: "foo=bar",
-        cookies: "cookie=value",
-        headers: { "USER_AGENT" => "Mozilla/5.0" }
+        headers: { "USER-AGENT" => "Mozilla/5.0" }
       )
     end
   end
 
   describe "#to_json" do
-    subject { described_class.new("https://example.com/path", "POST", "request body", "foo=bar", "cookie=value", { "USER_AGENT" => "Mozilla/5.0" }, env).to_json }
+    subject { described_class.new("https://example.com/path", "POST", "request body", "foo=bar", { "cookie" => "value" }, { "USER_AGENT" => "Mozilla/5.0" }, env).to_json }
 
     it "returns a JSON representation of the request" do
-      expect(subject).to eq('{"url":"https://example.com/path","method":"POST","data":"request body","query_string":"foo=bar","cookies":"cookie=value","headers":{"USER_AGENT":"Mozilla/5.0"}}')
+      expect(subject).to eq('{"url":"https://example.com/path","method":"POST","query_string":"foo=bar","headers":{"USER-AGENT":"Mozilla/5.0"}}')
     end
   end
 end

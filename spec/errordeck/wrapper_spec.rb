@@ -103,11 +103,32 @@ RSpec.describe Errordeck::Wrapper do
   end
 
   describe "#set_request" do
-    let(:request) { "test" }
+    let(:request) do
+      {
+        REQUEST_URI: "http://example.com",
+        REQUEST_METHOD: "GET",
+        HTTP_HOST: "example.com",
+        QUERY_STRING: "test=1",
+        HTTP_COOKIE: "test=1",
+        HTTP_USER_AGENT: "test"
+      }
+    end
+
+    let(:request_response) do
+      {
+        url: "http://example.com",
+        method: "GET",
+        headers: {
+          "HOST" => "example.com",
+          "USER-AGENT" => "test"
+        },
+        query_string: ""
+      }
+    end
 
     it "should set request" do
       wrapper.set_request(request)
-      expect(wrapper.request).to eq(request)
+      expect(wrapper.request.as_json).to eq(request_response)
     end
   end
 

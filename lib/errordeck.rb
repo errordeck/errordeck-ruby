@@ -6,10 +6,11 @@ require "uri"
 
 require_relative "errordeck/version"
 require_relative "errordeck/configuration"
+Dir["#{File.dirname(__FILE__)}/errordeck/errordeck/**/*.rb"].sort.each { |file| require file }
+require_relative "errordeck/request_handler"
 require_relative "errordeck/wrapper"
 require_relative "errordeck/scrubber/scrubber"
 require_relative "errordeck/plugin_require"
-Dir["#{File.dirname(__FILE__)}/errordeck/errordeck/**/*.rb"].sort.each { |file| require file }
 
 module Errordeck
   class Error < StandardError; end

@@ -1,17 +1,9 @@
 # frozen_string_literal: true
 
 module Errordeck
-  # the class that setup the events for Errordeck
   class Wrapper
-    # initialize the boxing class
-
     attr_accessor :context
     attr_reader :error_event, :transaction, :request, :user, :tags, :modules
-
-    # have a check if it is a message or exception
-    @message = false
-
-    @already_sent = false
 
     def initialize
       @error_event = nil
@@ -19,16 +11,18 @@ module Errordeck
       @request = nil
       @user = nil
       @tags = nil
+      @message = false
+      @already_sent = false
       if Gem::Specification.respond_to?(:map)
-        @modules = Gem::Specification.to_h { |spec| [spec.name, spec.version.to_s] }
+        @modules = Gem::Specification.to_h do |spec|
+          [spec.name, spec.version.to_s]
+        end
       end
       @context = Context.context
     end
 
-    # send event to errordeck
     def send_event
       return if @error_event.nil? && @message == true
-
       return if @already_sent
 
       uri = URI.parse("https://app.errordeck.com/api/#{config.project_id}/store")
@@ -46,32 +40,24 @@ module Errordeck
     def capture(exception, user = nil, tags = nil)
       @message = false
       @error_event = generate_from_exception(exception)
-
-      # set user context
       @error_event.user = user || @user
-
-      # set tags context
       @error_event.tags = tags || @tags
-
-      # set request context
       @error_event.request = @request
       @error_event
     end
 
-    # generate event with level, message and extra
     def message(level, message, extra = nil)
       @message = true
       @error_event = generate_boxing_event(level, message, extra)
-
-      # set user context
       @error_event.user = @user
-
-      # set tags context
       @error_event.tags = @tags
-
-      # set request context
       @error_event.request = @request
       @error_event
+    end
+
+    def set_action_context(env)
+      request_handler = RequestHandler.parse_from_rack_env(env)
+      @request = Request.parse_from_request_handler(request_handler)
     end
 
     def set_transaction(transaction = nil)
@@ -82,12 +68,10 @@ module Errordeck
       @request = Request.parse_from_rack_env(env)
     end
 
-    # set user context
     def user_context=(user)
       @user = user
     end
 
-    # set tags context
     def tags_context=(tags)
       @tags = tags
     end
@@ -96,7 +80,6 @@ module Errordeck
 
     def generate_from_exception(exception)
       exceptions = Errordeck::Exception.parse_from_exception(exception, project_root)
-
       Event.new(
         level: config.level || "error",
         transaction: transaction,
@@ -112,17 +95,12 @@ module Errordeck
     end
 
     def project_root
-      if defined?(Rails)
-        Rails.root.to_s
-      elsif defined?(Sinatra)
-        Sinatra::Application.root.to_s
-      elsif defined?(Rack)
-        Rack::Directory.new("").root.to_s
-      elsif defined?(Bundler)
-        Bundler.root.to_s
-      else
-        File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
-      end
+      return Rails.root.to_s if defined?(Rails)
+      return Sinatra::Application.root.to_s if defined?(Sinatra)
+      return Rack::Directory.new("").root.to_s if defined?(Rack)
+      return Bundler.root.to_s if defined?(Bundler)
+
+      File.expand_path(File.join(File.dirname(__FILE__), "..", ".."))
     end
 
     def generate_boxing_event(level, message, extra = nil)
