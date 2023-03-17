@@ -7,10 +7,10 @@ module Errordeck
     def initialize
       @token = nil
       @project_id = nil
-      @environment = "development"
-      @release = "0.0.0"
-      @dist = "0.0.0"
-      @level = "error"
+      @environment = nil
+      @release = nil
+      @dist = nil
+      @level = nil
       @server_name = nil
     end
   end

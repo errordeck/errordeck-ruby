@@ -49,7 +49,7 @@ Set the token, project_id, environment, release and dist in the configuration:
 Errordeck.configure do |config|
   config.token = "_r-3A7egL7uMSFASfdRodzxxxAQo"
   config.project_id = "1"
-  config.environment = "development" # defaults to "development"
+  config.environment = "development" # optional - if not set, it will be set to Rails.env
   config.release = "0.0.0" # optional
   config.dist = "0.0.0" # optional
 end
