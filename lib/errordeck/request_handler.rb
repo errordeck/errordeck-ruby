@@ -41,14 +41,15 @@ module Errordeck
       request[:query_string] = url.query || ""
       request[:params] = rack_env["PARAMS"] || parse_query_string(request[:query_string])
       request[:method] = rack_env["REQUEST_METHOD"] || "GET"
-      request[:cookies] = (rack_env["HTTP_COOKIE"] || rack_env["COOKIES"]) ? parse_query_string(rack_env["HTTP_COOKIE"] || rack_env["COOKIES"]) : {}
+      request[:cookies] =
+        rack_env["HTTP_COOKIE"] || rack_env["COOKIES"] ? parse_query_string(rack_env["HTTP_COOKIE"] || rack_env["COOKIES"]) : {}
       request[:headers] = (rack_env["HEADERS"] || rack_env).select { |k, _| k.start_with?("HTTP_") }
       request
     end
 
     def self.parse_from_rack_env(rack_env)
       request = set_request_from_env(rack_env.dup)
-      new(request)  
+      new(request)
     end
 
     def method
@@ -108,7 +109,7 @@ module Errordeck
 
     def self.parse_query_string(query_string)
       return query_string if query_string.is_a?(Hash)
-      
+
       query_string.split("&").each_with_object({}) do |pair, hash|
         key, value = pair.split("=").map { |part| CGI.unescape(part) }
         if hash.key?(key)

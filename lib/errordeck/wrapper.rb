@@ -81,7 +81,7 @@ module Errordeck
     def generate_from_exception(exception)
       exceptions = Errordeck::Exception.parse_from_exception(exception, project_root)
       Event.new(
-        level: config.level || "error",
+        level: config.level || exception_severity(exception),
         transaction: transaction,
         server_name: server_name_env,
         release: config.release,
@@ -116,6 +116,29 @@ module Errordeck
         extra: extra,
         contexts: context
       )
+    end
+
+    def exception_severity(exception)
+      case exception.class.to_s
+      when "SystemExit", "SignalException", "Interrupt", "NoMemoryError", "SecurityError"
+        :critical
+      when "RuntimeError", "TypeError", "LoadError", "NameError", "ArgumentError", "IndexError", "KeyError", "RangeError",
+           "NoMethodError", "FrozenError", "SocketError", "EncodingError", "Encoding::InvalidByteSequenceError",
+           "Encoding::UndefinedConversionError", "ZeroDivisionError", "SystemCallError", "Errno::EACCES",
+           "Errno::EADDRINUSE", "Errno::ECONNREFUSED", "Errno::ECONNRESET", "Errno::EEXIST", "Errno::EHOSTUNREACH",
+           "Errno::EINTR", "Errno::EINVAL", "Errno::EISDIR", "Errno::ENETDOWN", "Errno::ENETUNREACH", "Errno::ENOENT",
+           "Errno::ENOMEM", "Errno::ENOSPC", "Errno::ENOTCONN", "Errno::ENOTDIR", "Errno::EPIPE", "Errno::ERANGE",
+           "Errno::ETIMEDOUT", "Errno::ENOTEMPTY"
+        :error
+      when "Warning", "SecurityWarning", "DeprecatedError", "DeprecationWarning", "RuntimeWarning", "SyntaxError",
+           "NameError::UndefinedVariable", "LoadError::MissingFile", "NoMethodError::MissingMethod",
+           "ArgumentError::InvalidValue", "ArgumentError::MissingRequiredParameter", "IndexError::OutOfRange",
+           "ActiveRecord::RecordNotFound", "Mongoid::Errors::DocumentNotFound", "Redis::CommandError", "Net::ReadTimeout",
+           "Faraday::TimeoutError"
+        :warning
+      else
+        :error
+      end
     end
 
     def config

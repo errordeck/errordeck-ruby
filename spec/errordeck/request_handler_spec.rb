@@ -25,7 +25,7 @@ RSpec.describe Errordeck::RequestHandler do
         expect(request[:query_string]).to eq("id=1")
         expect(request[:params]).to eq({ "id" => "1" })
         expect(request[:cookies]).to eq({})
-        expect(request[:headers]).to eq({"HTTP_HOST" => "example.com" })
+        expect(request[:headers]).to eq({ "HTTP_HOST" => "example.com" })
       end
     end
   end
@@ -97,13 +97,14 @@ RSpec.describe Errordeck::RequestHandler do
   describe "#to_hash" do
     it "returns a hash representation of the request" do
       request_handler = Errordeck::RequestHandler.parse_from_rack_env({
-                                                        method: "GET",
-                                                        url: "https://example.com/users?id=1",
-                                                        query_string: "id=1",
-                                                        cookies: { "session_id" => "12345" },
-                                                        headers: { "HTTP_HOST" => "example.com" },
-                                                        params: { "controller" => "users", "action" => "show" }
-                                                      })
+                                                                        method: "GET",
+                                                                        url: "https://example.com/users?id=1",
+                                                                        query_string: "id=1",
+                                                                        cookies: { "session_id" => "12345" },
+                                                                        headers: { "HTTP_HOST" => "example.com" },
+                                                                        params: { "controller" => "users",
+                                                                                  "action" => "show" }
+                                                                      })
       expect(request_handler.to_hash).to eq({
                                               method: "GET",
                                               url: "https://example.com/users?id=1",
