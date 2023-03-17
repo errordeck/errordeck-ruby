@@ -86,7 +86,7 @@ module Errordeck
         server_name: server_name_env,
         release: config.release,
         dist: config.dist,
-        environment: config.environment,
+        environment: config.environment || find_environment,
         message: exception.message,
         modules: modules,
         exceptions: exceptions,
@@ -116,6 +116,17 @@ module Errordeck
         extra: extra,
         contexts: context
       )
+    end
+
+    def find_environment
+      # check if rails env is set or sinatra env is set
+      if defined?(Rails)
+        Rails.env
+      elsif defined?(Sinatra)
+        Sinatra::Base.environment
+      else
+        "production"
+      end
     end
 
     def exception_severity(exception)

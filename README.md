@@ -89,6 +89,10 @@ rescue StandardError => e
 end
 ``` 
 
+### Using with Rails
+
+Rails will add the exceptionhandler automatically, so you don't need to do anything. You can still use above example to fill context and such. And the config is needed.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
