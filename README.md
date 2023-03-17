@@ -12,6 +12,7 @@ Ruby client for Errordeck.
 - [x] Send environment to Errordeck
 - [x] Send platform to Errordeck
 - [x] Send stacktrace to Errordeck
+- [x] Send context/file content (around the error) to Errordeck
 - [ ] Send breadcrumbs to Errordeck
 - [ ] Send release to Errordeck
 - [ ] Send source maps to Errordeck
