@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/errordeck-ruby.svg)](https://badge.fury.io/rb/errordeck-ruby)
 
-Ruby client for Errordeck.
+Ruby client for [Errordeck](https://www.errordeck.com). Errordeck is a error monitoring service that helps you find the errors in a easy and fun way.
 
 ## Features
 
