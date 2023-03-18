@@ -29,7 +29,7 @@ Ruby client for Errordeck.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'errordeck-ruby'
+gem 'errordeck'
 ```
 
 And then execute:
@@ -38,7 +38,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install errordeck-ruby
+    $ gem install errordeck
 
 ## Usage
 
